@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Dimensions, StyleSheet, Text, View, ActivityIndicator } from 'react-native';
 import Video from 'react-native-video';
 import { RecyclerListView, DataProvider, LayoutProvider } from "recyclerlistview";
-import { Container } from "native-base";
+import { DataCall } from './utils/DataCall';
+// import { Container } from "native-base";
 
 const LocalArr = [
   "https://bitdash-a.akamaihd.net/content/MI201109210084_1/m3u8s/f08e80da-bf1d-4e3d-8899-f0f6155f6efa.m3u8",
@@ -64,15 +65,14 @@ export default function App() {
       //To prevent redundant fetch requests. Needed because cases of quick up/down scroll can trigger onEndReached
       //more than once
       inProgressNetworkReq = true;
-      const videos = await DataCall.get(page);
+      const videos = await DataCall(page)
       inProgressNetworkReq = false;
 
       setDataprovider(dataProvider.cloneWithRows(
         [...videos, videos]
-      ),
-        setVideos([...videos, videos]),
-        // setPage(page + 1)
-      )
+      ))
+      // setPage(page + 1)
+      setVideos([...videos, videos])
     }
   }
 
@@ -115,7 +115,7 @@ export default function App() {
   };
   return (
     <View style={styles.container}>
-      {videos != 0
+      {videos != null
         ? <RecyclerListView
           style={{ flex: 1 }}
           // contentContainerStyle={{ margin: 3 }}

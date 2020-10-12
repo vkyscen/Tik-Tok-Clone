@@ -21,7 +21,7 @@ export default function App() {
   const [page, setPage] = useState(0);
   const [dataProvider, setDataprovider] = useState(new DataProvider((r1, r2) => {
     return r1 !== r2;
-  }));
+  }, (index) => videos[index].playbackUrl));
   const [layoutProvider, setLayoutprovider] = useState(new LayoutProvider(
     index => ViewTypes.FULL,
     (type, dim) => {
@@ -39,27 +39,29 @@ export default function App() {
   inProgressNetworkReq = false
 
   useEffect(() => {
-    fetch("https://europe-west1-boom-dev-7ad08.cloudfunctions.net/videoFeed", {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        page: 0,
-      })
-    })
-      .then((res) => res.json())
-      .then((json) => {
-        setVideos(json)
-        console.log(data)
-      }
-      )
-      .catch((e) => {
-        console.log(e);
-      });
-  }, []);
-
+    fetchMoreData();
+    //   fetch("https://europe-west1-boom-dev-7ad08.cloudfunctions.net/videoFeed", {
+    //     method: 'POST',
+    //     headers: {
+    //       Accept: 'application/json',
+    //       'Content-Type': 'application/json'
+    //     },
+    //     body: JSON.stringify({
+    //       page: 0,
+    //     })
+    //   })
+    //     .then((res) => res.json())
+    //     .then((json) => {
+    //       setVideos(json)
+    //       console.log(data)
+    //     }
+    //     )
+    //     .catch((e) => {
+    //       console.log(e);
+    //     });
+    // }, []);
+    fetchMoreData();
+  })
   fetchMoreData = async () => {
     if (!inProgressNetworkReq) {
       //To prevent redundant fetch requests. Needed because cases of quick up/down scroll can trigger onEndReached
@@ -82,7 +84,7 @@ export default function App() {
         return (
           <Video
             // source={{uri: "https://www.w3schools.com/html/mov_bbb.mp4"}}   
-            source={{ uri: "https://bitmovin-a.akamaihd.net/content/playhouse-vr/m3u8s/105560.m3u8" }}
+            source={{ uri: "https://bitmovin-a.akamaihd.net/content/playhouse-vr/m3u8s/105560.m3u8" }} //data.playbackUrl
 
             // onBuffer={this.onBuffer}                // Callback when remote video is buffering
             // onError={this.videoError}  
